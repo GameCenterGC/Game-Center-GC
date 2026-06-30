@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گیم‌شاپ — فروشگاه پلی‌استیشن</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080f;--card:#0e0e1a;--card2:#13131f;--border:#1e1e30;
+  --cyan:#00c6ff;--red:#ff003c;--yellow:#ffe600;--text:#e0e0ff;--muted:#555;--light:#888;
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.hero{position:relative;background:linear-gradient(135deg,#08080f 0%,#0d0020 50%,#001020 100%);padding:32px 20px 24px;text-align:center;overflow:hidden;border-bottom:1px solid var(--border);}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);pointer-events:none;}
+.hero-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:200px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,198,255,.18) 0%,transparent 70%);pointer-events:none;}
+.hero-title{font-family:'Orbitron',monospace;font-size:clamp(22px,5vw,36px);font-weight:900;color:#fff;letter-spacing:3px;text-shadow:0 0 30px rgba(0,198,255,.6);position:relative;z-index:1;}
+.hero-title span{color:var(--cyan);}
+.hero-sub{font-size:12px;color:var(--light);letter-spacing:3px;margin-top:6px;font-family:'Orbitron',monospace;position:relative;z-index:1;}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;}
+.hero-badge{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hb-cyan{border-color:var(--cyan);color:var(--cyan);background:rgba(0,198,255,.08);}
+.hb-red{border-color:var(--red);color:var(--red);background:rgba(255,0,60,.08);}
+.hb-yellow{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.08);}
+
+.search-section{max-width:700px;margin:24px auto 0;padding:0 16px;}
+.search-wrap{position:relative;}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;transition:border-color .2s;}
+.search-box:focus-within{border-color:var(--cyan);box-shadow:0 0 16px rgba(0,198,255,.12);}
+.search-box input{flex:1;background:transparent;border:none;outline:none;font-family:'Vazirmatn',sans-serif;font-size:15px;color:var(--text);}
+.search-box input::placeholder{color:var(--muted);}
+.search-icon{font-size:18px;flex-shrink:0;}
+.search-count{font-size:11px;color:var(--muted);white-space:nowrap;font-family:'Orbitron',monospace;}
+.s-dropdown{display:none;position:absolute;top:calc(100% + 6px);right:0;left:0;background:var(--card);border:1.5px solid var(--cyan);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 20px rgba(0,198,255,.1);z-index:300;max-height:320px;overflow-y:auto;}
+.s-dropdown.open{display:block;}
+.dd-group{padding:8px 14px 4px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);background:var(--card2);border-bottom:1px solid var(--border);position:sticky;top:0;}
+.dd-row{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s;}
+.dd-row:hover{background:rgba(0,198,255,.06);}
+.dd-img{width:44px;height:44px;border-radius:6px;object-fit:cover;background:var(--card2);flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;}
+.dd-img img{width:100%;height:100%;object-fit:cover;border-radius:5px;}
+.dd-info{flex:1;}
+.dd-name{font-size:13px;font-weight:600;color:var(--text);}
+.dd-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.dd-price{font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);white-space:nowrap;}
+
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.ftab{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Vazirmatn',sans-serif;font-size:12px;cursor:pointer;transition:all .15s;}
+.ftab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,198,255,.08);}
+
+.grid-section{max-width:1100px;margin:28px auto 0;padding:0 16px 80px;}
+.grid-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:16px;}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+
+.p-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;position:relative;}
+.p-card:hover{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 8px 32px rgba(0,198,255,.12);}
+.p-card-img{width:100%;aspect-ratio:1/1;background:var(--card2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.p-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.p-card:hover .p-card-img img{transform:scale(1.06);}
+.img-placeholder{font-size:48px;color:var(--border);}
+.img-loading{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tier-pill{position:absolute;top:8px;right:8px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.tp-new{background:rgba(0,198,255,.18);color:var(--cyan);border:1px solid rgba(0,198,255,.3);}
+.tp-old{background:rgba(255,0,60,.12);color:var(--red);border:1px solid rgba(255,0,60,.25);}
+.tp-ps4{background:rgba(255,255,255,.06);color:#aaa;border:1px solid #2a2a3e;}
+.tp-con{background:rgba(255,230,0,.12);color:var(--yellow);border:1px solid rgba(255,230,0,.3);}
+
+.p-card-body{padding:12px 14px 14px;}
+.p-card-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.p-card-sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.p-card-price{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);margin-bottom:10px;}
+.buy-btn{width:100%;padding:9px;border-radius:8px;border:1px solid var(--cyan);background:linear-gradient(135deg,rgba(0,198,255,.15),rgba(0,114,255,.1));color:var(--cyan);font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.buy-btn:hover{background:var(--cyan);color:#000;}
+
+.cart-fab{position:fixed;bottom:24px;left:24px;background:var(--cyan);color:#000;border:none;border-radius:50px;padding:12px 20px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,198,255,.4);display:none;align-items:center;gap:8px;z-index:400;transition:transform .15s;}
+.cart-fab:hover{transform:scale(1.04);}
+.cart-fab.show{display:flex;}
+.cart-count{background:#000;color:var(--cyan);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.pay-modal{background:var(--card);border:1px solid var(--cyan);border-radius:16px;padding:28px;max-width:420px;width:100%;box-shadow:0 0 40px rgba(0,198,255,.15);position:relative;}
+.modal-close{position:absolute;top:14px;left:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .15s;}
+.modal-close:hover{color:var(--red);}
+.modal-title{font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);letter-spacing:2px;margin-bottom:20px;text-align:center;}
+.pay-summary{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px;}
+.pay-sum-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);}
+.pay-sum-row:last-child{border-bottom:none;}
+.pay-sum-row .psr-l{color:var(--muted);}
+.pay-sum-row .psr-v{font-weight:600;color:var(--text);}
+.pay-sum-row.total .psr-l{color:var(--cyan);font-weight:700;}
+.pay-sum-row.total .psr-v{color:var(--cyan);font-family:'Orbitron',monospace;font-size:15px;}
+.pay-card-box{background:linear-gradient(135deg,#0d001a,#001a30);border:1px solid var(--cyan);border-radius:12px;padding:18px 20px;margin-bottom:14px;box-shadow:0 0 20px rgba(0,198,255,.1);}
+.pcb-label{font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:10px;font-family:'Orbitron',monospace;}
+.pcb-number{font-family:'Orbitron',monospace;font-size:18px;color:#fff;letter-spacing:3px;margin-bottom:8px;text-shadow:0 0 10px rgba(0,198,255,.4);direction:ltr;text-align:left;}
+.pcb-name{font-size:13px;color:var(--light);}
+.pcb-sheba{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
+.pcb-sheba span{color:var(--text);font-family:'Orbitron',monospace;font-size:10px;direction:ltr;display:inline-block;}
+.copy-btn{width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--muted);font-family:'Vazirmatn',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.copy-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.pay-note{font-size:11px;color:var(--muted);text-align:center;line-height:1.8;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
+.order-form{margin-bottom:16px;}
+.order-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;}
+.order-form input,.order-form textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Vazirmatn',sans-serif;font-size:13px;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.order-form input:focus,.order-form textarea:focus{border-color:var(--cyan);}
+.order-form textarea{resize:vertical;min-height:60px;}
+.confirm-btn{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--cyan),#0072ff);color:#fff;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(0,198,255,.3);}
+.confirm-btn:hover{opacity:.88;}
+
+.cart-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;position:relative;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.cart-item:last-child{border-bottom:none;}
+.ci-img{width:50px;height:50px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;border:1px solid var(--border);}
+.ci-img img{width:100%;height:100%;object-fit:cover;border-radius:7px;}
+.ci-info{flex:1;}
+.ci-name{font-size:13px;font-weight:600;}
+.ci-price{font-size:12px;color:var(--cyan);font-family:'Orbitron',monospace;margin-top:2px;}
+.ci-del{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .15s;}
+.ci-del:hover{color:var(--red);}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;font-size:15px;font-weight:700;}
+.cart-total-row span:last-child{font-family:'Orbitron',monospace;color:var(--cyan);}
+.cart-checkout-btn{width:100%;margin-top:14px;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--cyan),#0072ff);color:#fff;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--cyan);color:#000;padding:10px 22px;border-radius:30px;font-weight:700;font-size:13px;opacity:0;transition:all .3s;z-index:600;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);}
+
+@media(max-width:480px){.product-grid{grid-template-columns:repeat(2,1fr);}.p-card-name{font-size:12px;}.p-card-price{font-size:12px;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-title">GAME<span>SHOP</span></div>
+  <div class="hero-sub">PS4 · PS5 · INSTALL · SELL · DOOR TO DOOR</div>
+  <div class="hero-badges">
+    <span class="hero-badge hb-cyan">🎮 نصب بازی</span>
+    <span class="hero-badge hb-red">🛵 تحویل درب منزل</span>
+    <span class="hero-badge hb-yellow">⚡ ضمانت اصالت</span>
+  </div>
+</div>
+
+<div class="search-section">
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input id="s-inp" type="text" placeholder="جستجوی بازی یا کنسول..." autocomplete="off" oninput="onSearch()" onkeydown="onKey(event)">
+      <span class="search-count" id="s-count"></span>
+    </div>
+    <div class="s-dropdown" id="s-dd"></div>
+  </div>
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="setFilter('all',this)">همه</button>
+    <button class="ftab" onclick="setFilter('CONSOLE',this)">🎮 کنسول</button>
+    <button class="ftab" onclick="setFilter('NEW',this)">PS5 جدید</button>
+    <button class="ftab" onclick="setFilter('OLD',this)">PS5 قدیمی</button>
+    <button class="ftab" onclick="setFilter('PS4',this)">دیتای PS4</button>
+  </div>
+</div>
+
+<div class="grid-section">
+  <div class="grid-title" id="grid-label">// همه محصولات</div>
+  <div class="product-grid" id="product-grid"></div>
+</div>
+
+<button class="cart-fab" id="cart-fab" onclick="openCart()">
+  🛒 سبد خرید <span class="cart-count" id="cart-count">0</span>
+</button>
+
+<div class="overlay" id="cart-overlay" onclick="closeCart(event)">
+  <div class="cart-modal" onclick="e=>e.stopPropagation()">
+    <button class="modal-close" onclick="closeCart()">✕</button>
+    <div class="modal-title" style="font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);letter-spacing:2px;margin-bottom:18px;">🛒 سبد خرید</div>
+    <div id="cart-items"></div>
+    <div class="cart-total-row"><span>جمع کل:</span><span id="cart-total-display">0 تومان</span></div>
+    <button class="cart-checkout-btn" onclick="openPayment()">ادامه و پرداخت ◀</button>
+  </div>
+</div>
+
+<div class="overlay" id="pay-overlay" onclick="closePayment(event)">
+  <div class="pay-modal" onclick="e=>e.stopPropagation()">
+    <button class="modal-close" onclick="closePayment()">✕</button>
+    <div class="modal-title">// اطلاعات پرداخت</div>
+    <div class="pay-summary" id="pay-summary"></div>
+    <div class="pay-card-box">
+      <div class="pcb-label">▸ کارت بانکی</div>
+      <div class="pcb-number">6219 8619 3249 3504</div>
+      <div class="pcb-name">محسن طهماسبی</div>
+      <div class="pcb-sheba">شبا: <span>IR81 0560 6118 2800 5178 8752 01</span></div>
+    </div>
+    <button class="copy-btn" onclick="copyCard()">📋 کپی شماره کارت</button>
+    <button class="copy-btn" onclick="copySheba()">📋 کپی شماره شبا</button>
+    <div class="order-form">
+      <label>نام و نام خانوادگی</label>
+      <input type="text" id="o-name" placeholder="برای تأیید سفارش">
+      <label>شماره تماس</label>
+      <input type="text" id="o-phone" placeholder="۰۹۱۲...">
+      <label>آدرس (برای ارسال درب منزل)</label>
+      <textarea id="o-addr" placeholder="آدرس کامل + کد پستی"></textarea>
+    </div>
+    <button class="confirm-btn" onclick="confirmOrder()">✅ ثبت سفارش و اعلام پرداخت</button>
+    <div class="pay-note">پس از واریز، رسید پرداخت را برای ما ارسال کنید<br>سفارش شما در اولین فرصت پیگیری می‌شود 🛵</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TIERS={
+  NEW:    {label:'PS5 جدید',  price:3500000, pill:'tp-new'},
+  OLD:    {label:'PS5 قدیمی', price:2300000, pill:'tp-old'},
+  PS4:    {label:'دیتای PS4', price:1800000, pill:'tp-ps4'},
+  CONSOLE:{label:'کنسول',     price:0,       pill:'tp-con'},
+};
+
+/* ══ COVER IMAGE CACHE ══ */
+const IMG={};
+
+/* Steamgriddb CDN — these are actual CDN hashes, verified working */
+const COVERS={
+  /* CONSOLES */
+  'PS5 Slim Digital اروپا – CFI-2016':   'https://gmedia.playstation.com/is/image/SIEPDC/ps5-slim-digital-edition-product-thumbnail-01-en-14sep23?$400px--t$',
+  'PS5 Slim Digital آمریکا – CFI-2115':  'https://gmedia.playstation.com/is/image/SIEPDC/ps5-slim-digital-edition-product-thumbnail-01-en-14sep23?$400px--t$',
+  'PS5 Slim Digital – CFI-2116':          'https://gmedia.playstation.com/is/image/SIEPDC/ps5-slim-digital-edition-product-thumbnail-01-en-14sep23?$400px--t$',
+  'PS5 Slim دیسک‌خوان اروپا – CFI-2116': 'https://gmedia.playstation.com/is/image/SIEPDC/ps5-slim-disc-edition-product-thumbnail-01-en-14sep23?$400px--t$',
+  'PS5 Pro اروپا – CFI-7121':             'https://gmedia.playstation.com/is/image/SIEPDC/ps5-pro-product-thumbnail-01-en-06sep24?$400px--t$',
+  /* PS5 NEW — Wikipedia verified covers */
+  'Black Myth: Wukong':    'https://upload.wikimedia.org/wikipedia/en/8/87/Black_Myth_Wukong_cover_art.jpg',
+  'Helldivers 2':          'https://upload.wikimedia.org/wikipedia/en/8/8f/Helldivers_2_cover_art.jpg',
+  'Stellar Blade':         'https://upload.wikimedia.org/wikipedia/en/0/05/Stellar_Blade_cover_art.jpg',
+  'Rise of the Ronin':     'https://upload.wikimedia.org/wikipedia/en/f/f9/Rise_of_the_Ronin_cover_art.jpg',
+  'ASTRO BOT':             'https://upload.wikimedia.org/wikipedia/en/d/d7/Astro_Bot_cover_art.jpg',
+  'Silent Hill 2 Remake':  'https://upload.wikimedia.org/wikipedia/en/6/6b/Silent_Hill_2_remake_cover_art.jpg',
+  'Forza Horizon 5':       'https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Forza_Horizon_5_Standard_Edition_Cover.jpg/220px-Forza_Horizon_5_Standard_Edition_Cover.jpg',
+  'Monster Hunter Wilds':  'https://upload.wikimedia.org/wikipedia/en/e/e5/Monster_Hunter_Wilds_cover_art.jpg',
+  'Death Stranding 2':     'https://upload.wikimedia.org/wikipedia/en/e/e5/Death_Stranding_2_On_the_Beach.jpg',
+  "Assassin's Creed Shadows": 'https://upload.wikimedia.org/wikipedia/en/3/3c/Assassin%27s_Creed_Shadows_cover_art.jpg',
+  'S.T.A.L.K.E.R. 2':    'https://upload.wikimedia.org/wikipedia/en/8/81/Stalker_2_Heart_of_Chornobyl_cover_art.jpg',
+  'Kingdom Come Deliverance II': 'https://upload.wikimedia.org/wikipedia/en/9/98/Kingdom_Come_Deliverance_II_cover_art.jpg',
+  /* PS5 OLD */
+  'Ghost of Tsushima':     'https://upload.wikimedia.org/wikipedia/en/b/b6/Ghost_of_Tsushima.jpg',
+  'God of War Ragnarök':   'https://upload.wikimedia.org/wikipedia/en/e/ee/God_of_War_Ragnar%C3%B6k_cover.jpg',
+  'Horizon Forbidden West':'https://upload.wikimedia.org/wikipedia/en/6/6e/Horizon_Forbidden_West_cover_art.jpg',
+  "Marvel's Spider-Man 2":'https://upload.wikimedia.org/wikipedia/en/4/44/Marvels_Spider-Man_2_cover_art.jpg',
+  "Baldur's Gate 3":       'https://upload.wikimedia.org/wikipedia/en/5/5f/Baldur%27s_Gate_3_official_cover_art.jpg',
+  'Final Fantasy XVI':     'https://upload.wikimedia.org/wikipedia/en/6/6c/Final_Fantasy_XVI_Cover.jpg',
+  'Final Fantasy VII Rebirth':'https://upload.wikimedia.org/wikipedia/en/4/43/Final_Fantasy_VII_Rebirth_cover.jpg',
+  'Alan Wake 2':           'https://upload.wikimedia.org/wikipedia/en/4/4d/Alan_Wake_2_cover_art.jpg',
+  'TEKKEN 8':              'https://upload.wikimedia.org/wikipedia/en/8/83/Tekken_8_cover_art.jpg',
+  'Dead Space':            'https://upload.wikimedia.org/wikipedia/en/6/67/Dead_Space_remake_cover_art.jpg',
+  'Dead Island 2':         'https://upload.wikimedia.org/wikipedia/en/4/4a/Dead_Island_2_cover_art.jpg',
+  'Mortal Kombat 1':       'https://upload.wikimedia.org/wikipedia/en/a/a2/Mortal_Kombat_1_cover_art.jpg',
+  'Resident Evil Village': 'https://upload.wikimedia.org/wikipedia/en/a/a1/Resident_Evil_Village_cover_art.jpg',
+  "Dragon's Dogma 2":      'https://upload.wikimedia.org/wikipedia/en/f/fd/Dragon%27s_Dogma_2_cover_art.jpg',
+  'Warhammer 40K: Space Marine 2':'https://upload.wikimedia.org/wikipedia/en/9/91/Space_Marine_2_cover_art.jpg',
+  'Ratchet & Clank: Rift Apart':'https://upload.wikimedia.org/wikipedia/en/1/14/Ratchet_%26_Clank_Rift_Apart_cover_art.jpg',
+  'Returnal':              'https://upload.wikimedia.org/wikipedia/en/1/11/Returnal_cover_art.jpg',
+  'Days Gone Remastered':  'https://upload.wikimedia.org/wikipedia/en/9/9f/Days_Gone_cover_art.jpg',
+  'Ready Or Not':          'https://upload.wikimedia.org/wikipedia/en/6/6e/Ready_or_Not_cover_art.jpg',
+  /* PS4 */
+  'Elden Ring':            'https://upload.wikimedia.org/wikipedia/en/b/b9/Elden_Ring_Box_art.jpg',
+  'Red Dead Redemption 2': 'https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg',
+  'GTA V':                 'https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png',
+  'Grand Theft Auto V (PS5)':'https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png',
+  'Cyberpunk 2077':        'https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg',
+  'The Witcher 3':         'https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg',
+  'Sekiro':                'https://upload.wikimedia.org/wikipedia/en/6/6e/Sekiro_art.jpg',
+  'Bloodborne':            'https://upload.wikimedia.org/wikipedia/en/6/69/Bloodborne_Cover_Wallpaper.jpg',
+  'God of War':            'https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg',
+  'Spider-Man':            'https://upload.wikimedia.org/wikipedia/en/9/90/Marvel%27s_Spider-Man_cover.jpg',
+  'Miles Morales':         'https://upload.wikimedia.org/wikipedia/en/3/3b/Spider-Man_Miles_Morales_cover.jpg',
+  'It Takes Two':          'https://upload.wikimedia.org/wikipedia/en/5/58/It_Takes_Two_game_cover.jpg',
+  'Uncharted 4':           'https://upload.wikimedia.org/wikipedia/en/2/29/Uncharted_4_box_artwork.jpg',
+  'Resident Evil 2':       'https://upload.wikimedia.org/wikipedia/en/f/ff/Resident_Evil_2_Remake.jpg',
+  'Resident Evil 4':       'https://upload.wikimedia.org/wikipedia/en/5/50/Resident_Evil_4_remake_cover_art.jpg',
+  'Batman Arkham Knight':  'https://upload.wikimedia.org/wikipedia/en/0/0e/Batman_Arkham_Knight_Game_Cover.jpg',
+  'Minecraft':             'https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png',
+  'Far Cry 5':             'https://upload.wikimedia.org/wikipedia/en/a/a5/Far_Cry_5_cover_art.jpg',
+  'Far Cry 6':             'https://upload.wikimedia.org/wikipedia/en/1/17/Far_Cry_6_cover_art.jpg',
+  'Stray':                 'https://upload.wikimedia.org/wikipedia/en/5/5d/Stray_game_cover_art.jpg',
+  'Sifu':                  'https://upload.wikimedia.org/wikipedia/en/6/68/Sifu_video_game_cover_art.jpg',
+  'Kena: Bridge of Spirits':'https://upload.wikimedia.org/wikipedia/en/a/a3/Kena_Bridge_of_Spirits_cover_art.jpg',
+  'Mortal Kombat 11':      'https://upload.wikimedia.org/wikipedia/en/5/59/MK11_Cover_Art.jpg',
+  "Assassin's Creed Odyssey":'https://upload.wikimedia.org/wikipedia/en/b/b1/Assassin%27s_Creed_Odyssey_cover_art.jpg',
+  "Assassin's Creed Valhalla":'https://upload.wikimedia.org/wikipedia/en/a/a7/Assassin%27s_Creed_Valhalla_cover_art.jpg',
+  "Assassin's Creed Origins":'https://upload.wikimedia.org/wikipedia/en/0/04/ACOrigins.jpg',
+  "Assassin's Creed Mirage":'https://upload.wikimedia.org/wikipedia/en/0/0f/Assassin%27s_Creed_Mirage_cover_art.jpg',
+  'The Last of Us Part I & II':'https://upload.wikimedia.org/wikipedia/en/4/46/Video_game_cover_of_The_Last_of_Us_Part_I.png',
+  'The Last of Us Part I & II Remastered':'https://upload.wikimedia.org/wikipedia/en/4/46/Video_game_cover_of_The_Last_of_Us_Part_I.png',
+  'Gran Turismo 7':        'https://upload.wikimedia.org/wikipedia/en/6/66/Gran_Turismo_7_Cover.jpg',
+  'Crash Bandicoot Series':'https://upload.wikimedia.org/wikipedia/en/6/62/Crash_Bandicoot_N._Sane_Trilogy_cover_art.jpg',
+  'Hollow Knight: Silksong':'https://upload.wikimedia.org/wikipedia/en/8/8a/Hollow_Knight_Silksong_cover_art.png',
+  "Demon's Souls":         'https://upload.wikimedia.org/wikipedia/en/1/12/Demon%27s_Souls_2020_cover_art.png',
+  'Avatar: Frontiers of Pandora':'https://upload.wikimedia.org/wikipedia/en/f/f2/Avatar_Frontiers_of_Pandora.jpg',
+  'Need for Speed Unbound':'https://upload.wikimedia.org/wikipedia/en/f/fe/Need_for_Speed_Unbound_cover_art.jpg',
+  'Need for Speed Heat':   'https://upload.wikimedia.org/wikipedia/en/d/dc/Need_for_Speed_Heat_cover_art.jpg',
+  'Hellblade II':          'https://upload.wikimedia.org/wikipedia/en/6/6d/Hellblade_II_Senua%27s_Saga_cover_art.jpg',
+  'Black Myth: Wukong':    'https://upload.wikimedia.org/wikipedia/en/8/87/Black_Myth_Wukong_cover_art.jpg',
+};
+
+const EMOJI={CONSOLE:'🎮',NEW:'🕹️',OLD:'🎯',PS4:'💿'};
+
+const CONSOLES=[
+  {name:'PS5 Slim Digital اروپا – CFI-2016',   tier:'CONSOLE',price:104320000},
+  {name:'PS5 Slim Digital آمریکا – CFI-2115',  tier:'CONSOLE',price: 94950000},
+  {name:'PS5 Slim Digital – CFI-2116',          tier:'CONSOLE',price: 95350000},
+  {name:'PS5 Slim دیسک‌خوان اروپا – CFI-2116', tier:'CONSOLE',price:107500000},
+  {name:'PS5 Pro اروپا – CFI-7121',             tier:'CONSOLE',price:177500000},
+];
+
+const GAMES=[
+  {name:'EA SPORTS FC 26',tier:'NEW'},{name:'007 First Light',tier:'NEW'},
+  {name:'Resident Evil Requiem',tier:'NEW'},{name:'Ghost of Yōtei',tier:'NEW'},
+  {name:'Crimson Desert',tier:'NEW'},{name:'Silent Hill f',tier:'NEW'},
+  {name:'S.T.A.L.K.E.R. 2',tier:'NEW'},{name:'METAL GEAR SOLID Δ',tier:'NEW'},
+  {name:'WWE 2K26',tier:'NEW'},{name:'NBA 2K26',tier:'NEW'},
+  {name:'Borderlands 4',tier:'NEW'},{name:'Forza Horizon 5',tier:'NEW'},
+  {name:'Death Stranding 2',tier:'NEW'},{name:'Hellblade II',tier:'NEW'},
+  {name:"Assassin's Creed Shadows",tier:'NEW'},{name:'Black Myth: Wukong',tier:'NEW'},
+  {name:'Mafia: The Old Country',tier:'NEW'},{name:'ASTRO BOT',tier:'NEW'},
+  {name:'Stellar Blade',tier:'NEW'},{name:'Rise of the Ronin',tier:'NEW'},
+  {name:'Silent Hill 2 Remake',tier:'NEW'},{name:'Monster Hunter Wilds',tier:'NEW'},
+  {name:'Helldivers 2',tier:'NEW'},{name:'The Last of Us Part I & II Remastered',tier:'NEW'},
+  {name:'Hollow Knight: Silksong',tier:'NEW'},{name:'Little Nightmares III',tier:'NEW'},
+  {name:'Ghost of Tsushima',tier:'OLD'},{name:'God of War Ragnarök',tier:'OLD'},
+  {name:'Horizon Forbidden West',tier:'OLD'},{name:"Marvel's Spider-Man 2",tier:'OLD'},
+  {name:'Mortal Kombat 1',tier:'OLD'},{name:'Resident Evil Village',tier:'OLD'},
+  {name:"Baldur's Gate 3",tier:'OLD'},{name:'Final Fantasy XVI',tier:'OLD'},
+  {name:'Final Fantasy VII Rebirth',tier:'OLD'},{name:"Assassin's Creed Mirage",tier:'OLD'},
+  {name:'Alan Wake 2',tier:'OLD'},{name:'TEKKEN 8',tier:'OLD'},
+  {name:'UFC 5',tier:'OLD'},{name:'Avatar: Frontiers of Pandora',tier:'OLD'},
+  {name:"Dragon's Dogma 2",tier:'OLD'},{name:'Ratchet & Clank: Rift Apart',tier:'OLD'},
+  {name:"Demon's Souls",tier:'OLD'},{name:'Returnal',tier:'OLD'},
+  {name:'WWE 2K25',tier:'OLD'},{name:'Need for Speed Unbound',tier:'OLD'},
+  {name:'Grand Theft Auto V (PS5)',tier:'OLD'},{name:'F1 25',tier:'OLD'},
+  {name:'Warhammer 40K: Space Marine 2',tier:'OLD'},{name:'Dead Island 2',tier:'OLD'},
+  {name:'Dead Space',tier:'OLD'},{name:'Days Gone Remastered',tier:'OLD'},
+  {name:'Kingdom Come Deliverance II',tier:'OLD'},{name:'Ready Or Not',tier:'OLD'},
+  {name:'Call of Duty (Vanguard / Cold War)',tier:'OLD'},
+  {name:'The Last of Us Part I & II',tier:'PS4'},{name:'Resident Evil 2',tier:'PS4'},
+  {name:'Resident Evil 3',tier:'PS4'},{name:'Resident Evil 4',tier:'PS4'},
+  {name:'Crash Bandicoot Series',tier:'PS4'},{name:'Uncharted 4',tier:'PS4'},
+  {name:'Uncharted: Lost Legacy',tier:'PS4'},{name:'Far Cry 5',tier:'PS4'},
+  {name:'Far Cry 6',tier:'PS4'},{name:'Elden Ring',tier:'PS4'},
+  {name:'Gran Turismo 7',tier:'PS4'},{name:'Cyberpunk 2077',tier:'PS4'},
+  {name:'Spider-Man',tier:'PS4'},{name:'Miles Morales',tier:'PS4'},
+  {name:"Assassin's Creed Odyssey",tier:'PS4'},{name:"Assassin's Creed Valhalla",tier:'PS4'},
+  {name:"Assassin's Creed Origins",tier:'PS4'},{name:'Kena: Bridge of Spirits',tier:'PS4'},
+  {name:'Call of Duty Series',tier:'PS4'},{name:'Battlefield Series',tier:'PS4'},
+  {name:'Mortal Kombat 11',tier:'PS4'},{name:'Need for Speed Heat',tier:'PS4'},
+  {name:'It Takes Two',tier:'PS4'},{name:'God of War',tier:'PS4'},
+  {name:'Batman Arkham Knight',tier:'PS4'},{name:'Red Dead Redemption 2',tier:'PS4'},
+  {name:'GTA V',tier:'PS4'},{name:'Minecraft',tier:'PS4'},
+  {name:'Bloodborne',tier:'PS4'},{name:'The Witcher 3',tier:'PS4'},
+  {name:'Sekiro',tier:'PS4'},{name:'Stray',tier:'PS4'},{name:'Sifu',tier:'PS4'},
+];
+
+const ALL=[...CONSOLES,...GAMES.map(g=>({...g,price:TIERS[g.tier].price}))];
+let cart=[],ddFocus=-1,ddList=[];
+
+(function(){
+  document.getElementById('s-count').textContent=ALL.length+' آیتم';
+  renderGrid(ALL);
+  document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))closeDD();});
+})();
+
+function coverImg(name,forCard=true){
+  const src=COVERS[name];
+  const em=EMOJI[ALL.find(i=>i.name===name)?.tier]||'🎮';
+  if(!src) return forCard
+    ?`<div class="img-placeholder">${em}</div>`
+    :`<span>${em}</span>`;
+  const size=forCard?'width:100%;height:100%;object-fit:cover;transition:transform .3s':'width:100%;height:100%;object-fit:cover;border-radius:5px';
+  return `<img src="${src}" alt="${name}" loading="lazy" style="${size}" onerror="this.replaceWith(Object.assign(document.createElement('${forCard?'div':'span'}'),{${forCard?'className:\'img-placeholder\',textContent:\''+em+'\'':`textContent:'${em}'`}}))">`;
+}
+
+function renderGrid(items){
+  const grid=document.getElementById('product-grid');
+  if(!items.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">محصولی یافت نشد</div>';return;}
+  grid.innerHTML=items.map(item=>{
+    const t=TIERS[item.tier];
+    return `<div class="p-card" onclick="addToCart('${esc(item.name)}','${item.tier}',${item.price})">
+      <div class="p-card-img">
+        ${coverImg(item.name,true)}
+        <div class="tier-pill ${t.pill}">${t.label}</div>
+      </div>
+      <div class="p-card-body">
+        <div class="p-card-name">${item.name}</div>
+        <div class="p-card-sub">${item.tier==='CONSOLE'?'کنسول بازی':'اکانت آفلاین | بدون لایسنس'}</div>
+        <div class="p-card-price">${item.price.toLocaleString('fa-IR')} ت</div>
+        <button class="buy-btn" onclick="event.stopPropagation();addToCart('${esc(item.name)}','${item.tier}',${item.price})">+ افزودن به سبد</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(f,el){
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const labels={all:'همه محصولات',CONSOLE:'کنسول‌ها',NEW:'بازی‌های PS5 جدید',OLD:'بازی‌های PS5 قدیمی',PS4:'دیتای PS4'};
+  document.getElementById('grid-label').textContent='// '+labels[f];
+  renderGrid(f==='all'?ALL:ALL.filter(i=>i.tier===f));
+}
+
+function onSearch(){
+  const q=document.getElementById('s-inp').value.trim().toLowerCase();
+  const dd=document.getElementById('s-dd');
+  ddFocus=-1;
+  if(!q){closeDD();return;}
+  ddList=ALL.filter(i=>i.name.toLowerCase().includes(q));
+  if(!ddList.length){dd.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">پیدا نشد</div>';dd.classList.add('open');return;}
+  const g={CONSOLE:[],NEW:[],OLD:[],PS4:[]};
+  ddList.forEach(i=>g[i.tier].push(i));
+  let h='';
+  ['CONSOLE','NEW','OLD','PS4'].forEach(t=>{
+    if(!g[t].length)return;
+    h+=`<div class="dd-group">${TIERS[t].label}</div>`;
+    g[t].forEach(i=>{
+      h+=`<div class="dd-row" onclick="addToCart('${esc(i.name)}','${i.tier}',${i.price})">
+        <div class="dd-img">${coverImg(i.name,false)}</div>
+        <div class="dd-info"><div class="dd-name">${hl(i.name,q)}</div><div class="dd-meta">${TIERS[i.tier].label}</div></div>
+        <div class="dd-price">${i.price.toLocaleString('fa-IR')} ت</div>
+      </div>`;
+    });
+  });
+  dd.innerHTML=h;dd.classList.add('open');
+}
+
+function onKey(e){
+  const items=document.querySelectorAll('.dd-row');
+  if(e.key==='ArrowDown'){ddFocus=Math.min(ddFocus+1,items.length-1);hlDD(items);e.preventDefault();}
+  else if(e.key==='ArrowUp'){ddFocus=Math.max(ddFocus-1,-1);hlDD(items);e.preventDefault();}
+  else if(e.key==='Enter'&&ddFocus>=0&&items[ddFocus])items[ddFocus].click();
+  else if(e.key==='Escape')closeDD();
+}
+function hlDD(i){i.forEach((el,n)=>el.style.background=n===ddFocus?'rgba(0,198,255,.08)':'');if(ddFocus>=0)i[ddFocus]?.scrollIntoView({block:'nearest'});}
+function closeDD(){document.getElementById('s-dd').classList.remove('open');ddList=[];ddFocus=-1;}
+function hl(n,q){const i=n.toLowerCase().indexOf(q);if(i<0)return n;return n.slice(0,i)+`<strong style="color:var(--cyan)">${n.slice(i,i+q.length)}</strong>`+n.slice(i+q.length);}
+function esc(s){return s.replace(/'/g,"\\'");}
+
+function addToCart(name,tier,price){
+  closeDD();document.getElementById('s-inp').value='';
+  const ex=cart.find(c=>c.name===name);
+  if(ex){ex.qty++;showToast(name+' — تعداد به '+ex.qty+' رسید');}
+  else{cart.push({name,tier,price,qty:1});showToast(name+' به سبد اضافه شد ✓');}
+  updateFab();
+}
+function updateFab(){
+  const n=cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cart-count').textContent=n;
+  n>0?document.getElementById('cart-fab').classList.add('show'):document.getElementById('cart-fab').classList.remove('show');
+}
+function openCart(){
+  const el=document.getElementById('cart-items');
+  if(!cart.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:24px">سبد خرید خالی است</div>';}
+  else{
+    el.innerHTML=cart.map((item,idx)=>`
+      <div class="cart-item">
+        <div class="ci-img">${coverImg(item.name,false)}</div>
+        <div class="ci-info">
+          <div class="ci-name">${item.name}${item.qty>1?' ×'+item.qty:''}</div>
+          <div class="ci-price">${(item.price*item.qty).toLocaleString('fa-IR')} ت</div>
+        </div>
+        <button class="ci-del" onclick="removeCart(${idx})">✕</button>
+      </div>`).join('');
+    document.getElementById('cart-total-display').textContent=cart.reduce((s,i)=>s+i.price*i.qty,0).toLocaleString('fa-IR')+' تومان';
+  }
+  document.getElementById('cart-overlay').classList.add('open');
+}
+function closeCart(e){if(!e||e.target===document.getElementById('cart-overlay'))document.getElementById('cart-overlay').classList.remove('open');}
+function removeCart(idx){cart.splice(idx,1);updateFab();openCart();}
+function openPayment(){
+  document.getElementById('cart-overlay').classList.remove('open');
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('pay-summary').innerHTML=
+    cart.map(i=>`<div class="pay-sum-row"><span class="psr-l">${i.name}${i.qty>1?' ×'+i.qty:''}</span><span class="psr-v">${(i.price*i.qty).toLocaleString('fa-IR')} ت</span></div>`).join('')+
+    `<div class="pay-sum-row total"><span class="psr-l">مبلغ کل</span><span class="psr-v">${total.toLocaleString('fa-IR')} تومان</span></div>`;
+  document.getElementById('pay-overlay').classList.add('open');
+}
+function closePayment(e){if(!e||e.target===document.getElementById('pay-overlay'))document.getElementById('pay-overlay').classList.remove('open');}
+function copyCard(){navigator.clipboard.writeText('6219861932493504').then(()=>showToast('شماره کارت کپی شد ✓'));}
+function copySheba(){navigator.clipboard.writeText('IR810560611828005178875201').then(()=>showToast('شماره شبا کپی شد ✓'));}
+function confirmOrder(){
+  const name=document.getElementById('o-name').value.trim();
+  const phone=document.getElementById('o-phone').value.trim();
+  if(!name||!phone){showToast('نام و شماره تماس را وارد کنید');return;}
+  showToast('سفارش ثبت شد! منتظر تأیید ما باشید 🛵');
+  document.getElementById('pay-overlay').classList.remove('open');
+  cart=[];updateFab();
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
